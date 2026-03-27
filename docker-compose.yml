@@ -1,0 +1,27 @@
+services:
+  urs3c-lab:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: urs3c-lab
+    ports:
+      - "80:8501"
+    volumes:
+      - ollama_storage:/root/.ollama
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  ollama_storage:
+    driver: local
