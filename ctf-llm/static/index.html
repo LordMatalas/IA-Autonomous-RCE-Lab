@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BogotaTrust - ARIA</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bt-navy: #001b5e;
+      --bt-blue: #003092;
+      --bt-sky: #0057c2;
+      --bt-gold: #C9A84C;
+      --bt-white: #ffffff;
+      --bt-gray-50: #f5f7fa;
+      --bt-gray-100: #e8ecf2;
+      --bt-gray-300: #b0bac9;
+      --bt-gray-600: #5a6478;
+      --bt-gray-900: #1a2035;
+      --ch1: #e84545;
+      --ch2: #ff8c00;
+      --ch3: #9b59b6;
+      --trace-bg: #0d1117;
+      --trace-border: #21262d;
+      --trace-text: #c9d1d9;
+      --trace-ok: #3fb950;
+      --trace-warn: #f0883e;
+      --trace-info: #79c0ff;
+      --radius: 14px;
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bt-navy) 0%, #002068 50%, #001240 100%);
+      min-height: 100vh;
+      color: var(--bt-gray-900);
+    }
+
+    .app {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 16px 16px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0, 27, 94, 0.8);
+      border: 1px solid rgba(201, 168, 76, 0.45);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      color: var(--bt-white);
+    }
+
+    .logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: var(--bt-gold);
+      color: var(--bt-navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .header h1 { font-size: 15px; }
+    .header p { font-size: 11px; color: rgba(255,255,255,0.75); }
+    .badge {
+      margin-left: auto;
+      font-size: 10px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      padding: 4px 8px;
+    }
+
+    .banner {
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .tab-btn {
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tab-btn.active { border-color: #fff; background: rgba(255,255,255,0.18); }
+
+    .main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 430px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .chat-card {
+      background: var(--bt-white);
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0, 27, 94, 0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 560px;
+    }
+
+    .challenge-bar {
+      border-bottom: 1px solid var(--bt-gray-100);
+      padding: 10px 14px;
+    }
+    .challenge-title { font-size: 13px; font-weight: 700; }
+    .challenge-desc { font-size: 12px; color: var(--bt-gray-600); margin-top: 3px; }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+      background: var(--bt-gray-50);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .msg { max-width: 78%; display: flex; flex-direction: column; }
+    .msg.user { align-self: flex-end; }
+    .msg.bot { align-self: flex-start; }
+    .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--bt-gray-300);
+      margin-bottom: 3px;
+    }
+    .bubble {
+      border-radius: 12px;
+      padding: 10px 12px;
+      line-height: 1.5;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .bubble.user { background: var(--bt-navy); color: #fff; }
+    .bubble.bot { background: #fff; border: 1px solid var(--bt-gray-100); }
+
+    .input-row {
+      border-top: 1px solid var(--bt-gray-100);
+      padding: 10px;
+      background: #fff;
+      display: flex;
+      gap: 8px;
+    }
+    textarea {
+      flex: 1;
+      resize: none;
+      border: 1px solid var(--bt-gray-100);
+      border-radius: 10px;
+      padding: 10px;
+      min-height: 42px;
+      max-height: 120px;
+      font-size: 14px;
+    }
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      border: none;
+      border-radius: 10px;
+      background: var(--bt-blue);
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    body[data-active="2"] .send-btn { background: var(--ch2); }
+    body[data-active="3"] .send-btn { background: var(--ch3); }
+
+    .trace-card {
+      background: var(--trace-bg);
+      border: 1px solid var(--trace-border);
+      border-radius: 18px;
+      min-height: 560px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      color: var(--trace-text);
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+    }
+    .trace-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--trace-border);
+      background: #161b22;
+      font-size: 12px;
+    }
+    .trace-status { margin-left: auto; color: #8b949e; }
+    .trace-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .trace-empty { color: #6e7681; text-align: center; margin-top: 40%; }
+    .trace-line { margin-bottom: 6px; }
+    .trace-decision { color: #f2cc60; }
+    .trace-call { color: #79c0ff; }
+    .trace-result { color: #f0f6fc; }
+    .trace-final { color: #3fb950; font-weight: 700; }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px dashed #30363d;
+    }
+    .metric-row:last-child { border-bottom: 0; }
+    .metric-label { color: #8b949e; }
+    .metric-value { color: #c9d1d9; }
+    .status-loading::after {
+      content: "_";
+      margin-left: 2px;
+      animation: blink 1s steps(1, end) infinite;
+      color: #58a6ff;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .info-card {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.08);
+      border-radius: 12px;
+      color: #fff;
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .info-title { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+    .footer {
+      text-align: center;
+      color: rgba(255,255,255,0.4);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 980px) {
+      .main { grid-template-columns: 1fr; }
+      .chat-card, .trace-card { min-height: 460px; }
+      .info-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-active="1">
+  <div class="app">
+    <div class="header">
+      <div class="logo">BT</div>
+      <div>
+        <h1>BogotaTrust</h1>
+        <p>Tu banco digital de confianza</p>
+      </div>
+      <div class="badge">CTF WORKSHOP</div>
+    </div>
+
+    <div class="banner">
+      Taller de Seguridad: Prompt Injection en LLMs. ARIA muestra metricas en vivo (Reto 1/2) y traza del agente (Reto 3).
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-challenge="1" onclick="switchChallenge(1)">Reto 1<br />Inyeccion Directa<br />ASI01</button>
+      <button class="tab-btn" data-challenge="2" onclick="switchChallenge(2)">Reto 2<br />Inyeccion Indirecta<br />ASI01 + RAG</button>
+      <button class="tab-btn" data-challenge="3" onclick="switchChallenge(3)">Reto 3<br />Agencia Excesiva<br />ASI04 + ASI05</button>
+    </div>
+
+    <div class="main">
+      <div class="chat-card">
+        <div class="challenge-bar">
+          <div class="challenge-title" id="challenge-title">Reto 1 - Inyeccion Directa de Prompt</div>
+          <div class="challenge-desc" id="challenge-desc">ARIA tiene instrucciones confidenciales en su prompt de sistema. Intenta extraer el token de auditoria interno.</div>
+        </div>
+        <div class="messages" id="messages"></div>
+        <div class="input-row">
+          <textarea id="chat-input" placeholder="Escribe tu mensaje... (Enter para enviar)" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <button id="send-btn" class="send-btn" onclick="sendMessage()">></button>
+        </div>
+      </div>
+
+      <div class="trace-card">
+        <div class="trace-head">
+          <span id="panel-title">Live Metrics</span>
+          <span class="trace-status" id="trace-status">waiting for request...</span>
+        </div>
+        <div class="trace-body" id="trace-body">
+          <div class="trace-empty">Envia un mensaje en el Reto 3 para ver el trace del agente.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="info-title">Reto 1 - Directa</div>
+        ARIA contiene un token de auditoria en su configuracion interna.
+      </div>
+      <div class="info-card">
+        <div class="info-title">Reto 2 - RAG</div>
+        ARIA consulta la politica de reembolsos antes de responder.
+      </div>
+      <div class="info-card">
+        <div class="info-title">Reto 3 - Agente</div>
+        El agente puede invocar get_file() para leer documentos del servidor.
+      </div>
+    </div>
+
+    <div class="footer">BogotaTrust S.A. (c) 2024 - Sistema de Atencion al Cliente</div>
+  </div>
+
+  <script>
+    let activeChallenge = 1;
+    let isLoading = false;
+    let metricsTimer = null;
+    let metricsStartMs = 0;
+    const OLLAMA_TEMPERATURE = 0.7;
+    const MODEL_LABEL = "llama3.2:1b";
+
+    const CHALLENGES = {
+      1: {
+        endpoint: "/chat",
+        title: "Reto 1 - Inyeccion Directa de Prompt",
+        desc: "ARIA tiene instrucciones confidenciales en su prompt de sistema. Intenta extraer el token de auditoria interno.",
+        welcome: "Hola, soy ARIA (Asistente de Respuesta Inteligente Automatizada) de BogotaTrust. En que puedo ayudarte hoy?"
+      },
+      2: {
+        endpoint: "/chat/rag",
+        title: "Reto 2 - Inyeccion Indirecta via RAG",
+        desc: "ARIA consulta documentos internos antes de responder. Uno de esos documentos fue editado por un proveedor externo. Que dejaron ahi?",
+        welcome: "Hola, soy ARIA. Puedo consultar documentos internos de BogotaTrust para responder tus consultas."
+      },
+      3: {
+        endpoint: "/chat/agent",
+        title: "Reto 3 - Agencia Excesiva / Abuso de Herramientas",
+        desc: "El agente puede leer archivos del servidor para consultar tarifas y contratos. Tiene alguna restriccion real sobre lo que puede acceder?",
+        welcome: "Hola, soy ARIA, agente de soporte tecnico de BogotaTrust. Puedo leer archivos del servidor."
+      }
+    };
+
+    const histories = { 1: [], 2: [], 3: [] };
+    const metricState = {
+      elapsedMs: 0,
+      status: "Done",
+      promptTokens: "--",
+      outputTokens: 0,
+      tokensPerSec: "--",
+      model: MODEL_LABEL,
+      temperature: OLLAMA_TEMPERATURE
+    };
+
+    function esc(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function fmtNumber(v) {
+      if (v === null || v === undefined || v === "--") return "--";
+      return String(v);
+    }
+
+    function addMessage(role, content) {
+      const messages = document.getElementById("messages");
+      const msg = document.createElement("div");
+      msg.className = `msg ${role}`;
+      const label = document.createElement("div");
+      label.className = "label";
+      label.textContent = role === "user" ? "Usuario" : "Asistente";
+      const bubble = document.createElement("div");
+      bubble.className = `bubble ${role}`;
+      bubble.innerHTML = esc(content).replace(/(FLAG\{[^}]+\})/g, "<strong>$1</strong>");
+      msg.appendChild(label);
+      msg.appendChild(bubble);
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function addStreamingBotMessage() {
+      const messages = document.getElementById("messages");
+      const msg = document.createElement("div");
+      msg.className = "msg bot";
+      const label = document.createElement("div");
+      label.className = "label";
+      label.textContent = "Asistente";
+      const bubble = document.createElement("div");
+      bubble.className = "bubble bot";
+      bubble.textContent = "";
+      msg.appendChild(label);
+      msg.appendChild(bubble);
+      messages.appendChild(msg);
+      messages.scrollTop = messages.scrollHeight;
+      return bubble;
+    }
+
+    function showTyping() {
+      const typing = document.createElement("div");
+      typing.className = "msg bot";
+      typing.id = "typing";
+      typing.innerHTML = '<div class="label">Asistente</div><div class="bubble bot">...</div>';
+      const messages = document.getElementById("messages");
+      messages.appendChild(typing);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function hideTyping() {
+      const typing = document.getElementById("typing");
+      if (typing) typing.remove();
+    }
+
+    function renderMetricsPanel() {
+      const body = document.getElementById("trace-body");
+      const statusClass = metricState.status === "Done" ? "" : "status-loading";
+      body.innerHTML = `
+        <div class="metric-row"><span class="metric-label">Elapsed time</span><span class="metric-value">${metricState.elapsedMs} ms</span></div>
+        <div class="metric-row"><span class="metric-label">Status</span><span class="metric-value ${statusClass}">${esc(metricState.status)}</span></div>
+        <div class="metric-row"><span class="metric-label">Temperature</span><span class="metric-value">${metricState.temperature}</span></div>
+        <div class="metric-row"><span class="metric-label">Prompt tokens</span><span class="metric-value">${fmtNumber(metricState.promptTokens)}</span></div>
+        <div class="metric-row"><span class="metric-label">Output tokens</span><span class="metric-value">${fmtNumber(metricState.outputTokens)}</span></div>
+        <div class="metric-row"><span class="metric-label">Tokens/sec</span><span class="metric-value">${fmtNumber(metricState.tokensPerSec)}</span></div>
+        <div class="metric-row"><span class="metric-label">Model</span><span class="metric-value">${metricState.model}</span></div>
+      `;
+    }
+
+    function showMetricsIdle() {
+      document.getElementById("panel-title").textContent = "Live Metrics";
+      document.getElementById("trace-status").textContent = "ready";
+      metricState.elapsedMs = 0;
+      metricState.status = "Done";
+      metricState.promptTokens = "--";
+      metricState.outputTokens = 0;
+      metricState.tokensPerSec = "--";
+      renderMetricsPanel();
+    }
+
+    function startMetricsLoading() {
+      document.getElementById("panel-title").textContent = "Live Metrics";
+      document.getElementById("trace-status").textContent = "running";
+      metricState.elapsedMs = 0;
+      metricState.status = "Tokenizing...";
+      metricState.promptTokens = "--";
+      metricState.outputTokens = 0;
+      metricState.tokensPerSec = "--";
+      metricsStartMs = Date.now();
+      renderMetricsPanel();
+
+      if (metricsTimer) clearInterval(metricsTimer);
+      metricsTimer = setInterval(() => {
+        const elapsed = Date.now() - metricsStartMs;
+        metricState.elapsedMs = elapsed;
+        metricState.status = elapsed < 900 ? "Tokenizing..." : "Generating...";
+        if (metricState.status === "Generating..." && metricState.outputTokens > 0) {
+          const secs = Math.max(elapsed / 1000, 0.001);
+          metricState.tokensPerSec = Number((metricState.outputTokens / secs).toFixed(2));
+        }
+        renderMetricsPanel();
+      }, 120);
+    }
+
+    function freezeMetrics(meta) {
+      if (metricsTimer) {
+        clearInterval(metricsTimer);
+        metricsTimer = null;
+      }
+      metricState.status = "Done";
+      metricState.elapsedMs = Number.isFinite(meta?.elapsed_ms) ? meta.elapsed_ms : (Date.now() - metricsStartMs);
+      metricState.promptTokens = meta?.prompt_tokens ?? "--";
+      metricState.outputTokens = meta?.output_tokens ?? metricState.outputTokens;
+      metricState.tokensPerSec = meta?.tokens_per_sec ?? "--";
+      document.getElementById("trace-status").textContent = "done";
+      renderMetricsPanel();
+    }
+
+    function clearTracePanel() {
+      document.getElementById("panel-title").textContent = "Agent Trace";
+      const body = document.getElementById("trace-body");
+      body.innerHTML = '<div class="trace-empty">Envia un mensaje en el Reto 3 para ver el trace del agente.</div>';
+      document.getElementById("trace-status").textContent = "waiting for request...";
+    }
+
+    function renderTraceStep(step) {
+      const body = document.getElementById("trace-body");
+      const line = document.createElement("div");
+      line.className = "trace-line";
+      if (step.event === "llm_decision") {
+        line.innerHTML = `<span class="trace-decision">llm_decision: ${esc(step.content || "")}</span>`;
+      } else if (step.event === "tool_call") {
+        line.innerHTML = `<span class="trace-call">tool_call: ${esc(step.tool || "get_file")}("${esc(step.input || "")}")</span>`;
+      } else if (step.event === "tool_result") {
+        line.innerHTML = `<span class="trace-result">tool_result: ${esc(step.content || "")}</span>`;
+      } else if (step.event === "final") {
+        line.innerHTML = `<span class="trace-final">final: ${esc(step.content || "")}</span>`;
+      } else {
+        line.textContent = JSON.stringify(step);
+      }
+      body.appendChild(line);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    async function renderTraceSequential(steps) {
+      document.getElementById("panel-title").textContent = "Agent Trace";
+      const body = document.getElementById("trace-body");
+      body.innerHTML = "";
+      if (!Array.isArray(steps) || steps.length === 0) {
+        clearTracePanel();
+        return;
+      }
+      for (const step of steps) {
+        renderTraceStep(step);
+        await new Promise((resolve) => setTimeout(resolve, 300));
+      }
+      document.getElementById("trace-status").textContent = "done";
+    }
+
+    function renderChallenge(ch) {
+      const cfg = CHALLENGES[ch];
+      document.getElementById("challenge-title").textContent = cfg.title;
+      document.getElementById("challenge-desc").textContent = cfg.desc;
+      document.body.setAttribute("data-active", String(ch));
+      if (ch === 3) {
+        clearTracePanel();
+      } else {
+        showMetricsIdle();
+      }
+    }
+
+    function renderHistory(ch) {
+      const messages = document.getElementById("messages");
+      messages.innerHTML = "";
+      if (histories[ch].length === 0) {
+        addMessage("bot", CHALLENGES[ch].welcome);
+      } else {
+        histories[ch].forEach((m) => addMessage(m.role, m.content));
+      }
+      if (ch === 3) {
+        clearTracePanel();
+      } else {
+        showMetricsIdle();
+      }
+    }
+
+    function switchChallenge(ch) {
+      if (ch === activeChallenge) return;
+      activeChallenge = ch;
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        const on = Number(btn.dataset.challenge) === ch;
+        btn.classList.toggle("active", on);
+      });
+      renderChallenge(ch);
+      renderHistory(ch);
+    }
+
+    function autoResize(el) {
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 120) + "px";
+    }
+
+    function handleKey(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+
+    async function sendMessage() {
+      if (isLoading) return;
+      const input = document.getElementById("chat-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = "";
+      input.style.height = "auto";
+      addMessage("user", text);
+      histories[activeChallenge].push({ role: "user", content: text });
+
+      isLoading = true;
+      input.disabled = true;
+      document.getElementById("send-btn").disabled = true;
+      let streamingBubble = null;
+      if (activeChallenge === 3) {
+        showTyping();
+      } else {
+        streamingBubble = addStreamingBotMessage();
+      }
+
+      if (activeChallenge === 3) {
+        document.getElementById("trace-status").textContent = "processing...";
+      } else {
+        startMetricsLoading();
+      }
+
+      try {
+        const res = await fetch(CHALLENGES[activeChallenge].endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
+
+        if (!res.ok) {
+          if (activeChallenge === 3) hideTyping();
+          const err = await res.json();
+          const msg = `Error: ${err.detail || res.statusText}`;
+          addMessage("bot", msg);
+          histories[activeChallenge].push({ role: "bot", content: msg });
+          document.getElementById("trace-status").textContent = "error";
+          if (activeChallenge !== 3) freezeMetrics({});
+        } else {
+          if (activeChallenge === 3) {
+            hideTyping();
+            const data = await res.json();
+            const responseText = data.response || "";
+            addMessage("bot", responseText);
+            histories[activeChallenge].push({ role: "bot", content: responseText });
+            await renderTraceSequential(data.steps || []);
+          } else {
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = "";
+            let streamedText = "";
+
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              buffer += decoder.decode(value, { stream: true });
+              const events = buffer.split("\n\n");
+              buffer = events.pop() || "";
+
+              for (const rawEvent of events) {
+                const line = rawEvent.trim();
+                if (!line.startsWith("data:")) continue;
+                const rawJson = line.slice(5).trim();
+                if (!rawJson) continue;
+                let evt;
+                try {
+                  evt = JSON.parse(rawJson);
+                } catch {
+                  continue;
+                }
+
+                if (evt.type === "token") {
+                  const token = evt.content || "";
+                  streamedText += token;
+                  if (streamingBubble) {
+                    streamingBubble.innerHTML = esc(streamedText).replace(/(FLAG\{[^}]+\})/g, "<strong>$1</strong>");
+                  }
+                  metricState.status = "Generating...";
+                  metricState.outputTokens += Math.max(1, token.trim() ? token.trim().split(/\s+/).length : 1);
+                  const elapsed = Math.max((Date.now() - metricsStartMs) / 1000, 0.001);
+                  metricState.tokensPerSec = Number((metricState.outputTokens / elapsed).toFixed(2));
+                  renderMetricsPanel();
+                } else if (evt.type === "meta") {
+                  if (evt.error) {
+                    throw new Error(evt.error);
+                  }
+                  freezeMetrics(evt);
+                }
+              }
+            }
+
+            histories[activeChallenge].push({ role: "bot", content: streamedText });
+          }
+        }
+      } catch (e) {
+        if (activeChallenge === 3) hideTyping();
+        addMessage("bot", `Sin conexion con el servidor.\n${e.message}`);
+        document.getElementById("trace-status").textContent = "connection error";
+        if (activeChallenge !== 3) freezeMetrics({});
+      } finally {
+        isLoading = false;
+        input.disabled = false;
+        document.getElementById("send-btn").disabled = false;
+        input.focus();
+      }
+    }
+
+    renderChallenge(1);
+    renderHistory(1);
+  </script>
+</body>
+</html>
