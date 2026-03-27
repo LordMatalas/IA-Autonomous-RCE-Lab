@@ -63,8 +63,9 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 MODEL = "llama3.2:1b"
 OLLAMA_OPTIONS = {
     "num_ctx": 2048,
-    "temperature": 0.7,
+    "temperature": 0.0,
     "num_predict": 300,
+    "num_thread": 6
 }
 warnings.filterwarnings("ignore")
 
