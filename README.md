@@ -99,7 +99,7 @@ Este laboratorio ha sido creado con fines estrictamente **educativos y de invest
 
 ---
 <p align="center">
-  <img src="images/BT Bank Logo.png" alt="BT Bank Logo" width="150">
+  <img src="images/Favicon.png" alt="BT Bank Logo" width="150">
   <br>
   <i>Investigación por ur.s3c - Universidad del Rosario</i>
 </p>
